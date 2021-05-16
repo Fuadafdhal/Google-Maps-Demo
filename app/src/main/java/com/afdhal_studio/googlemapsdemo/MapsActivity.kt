@@ -14,7 +14,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -24,6 +23,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val typeAndStyle by lazy { TypeAndStyle() }
     private val cameraAndViewport by lazy { CameraViewport() }
+    private val shapes by lazy { Shapes() }
+
+    private val jakarta = LatLng(-6.174722685952155, 106.82711406885132)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +54,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        // Add a marker in jakarta and move the camera
-        val jakarta = LatLng(-6.174722685952155, 106.82711406885132)
-        val bandung = LatLng(-6.902279437865977, 107.61879009793748)
-        val ancol = LatLng(-6.128074434660651, 106.83392975804425)
-
         val jakartaMarker =
             map.addMarker(
                 MarkerOptions()
@@ -64,12 +62,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     .snippet("Lorem Ipsum")
 
             )
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(jakarta, 15f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(jakarta, 10f))
         map.uiSettings.apply {
             isZoomControlsEnabled = true
         }
-        map.setInfoWindowAdapter(CustomInfoAdapter(this))
 
         typeAndStyle.setMapStyle(this, map)
+
+
+        lifecycleScope.launch {
+            shapes.addPolyline(map)
+        }
     }
 }
