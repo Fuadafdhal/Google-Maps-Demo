@@ -3,7 +3,6 @@ package com.afdhal_studio.googlemapsdemo
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.afdhal_studio.googlemapsdemo.databinding.ActivityMapsBinding
@@ -38,54 +37,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val jakarta = LatLng(-6.174722685952155, 106.82711406885132)
-        val bandung = LatLng(-6.902279437865977, 107.61879009793748)
-        map.addMarker(MarkerOptions().position(jakarta).title("Marker in Home"))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(jakarta, 15f))
-        map.uiSettings.apply {
-            isZoomControlsEnabled = true
-        }
-        typeAndStyle.setMapStyle(this, map)
-
-//        lifecycleScope.launch {
-//            delay(4000)
-////            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraAndViewport.jakarta),2000,object : GoogleMap.CancelableCallback {
-////                override fun onFinish() {
-////                    Toast.makeText(this@MapsActivity, "Finished", Toast.LENGTH_SHORT).show()
-////                }
-////
-////                override fun onCancel() {
-////                    Toast.makeText(this@MapsActivity, "Cancelable", Toast.LENGTH_SHORT).show()
-////                }
-////            })
-////            map.animateCamera(CameraUpdateFactory.zoomTo(10f),2000,null)
-////            map.animateCamera(CameraUpdateFactory.newLatLngBounds(cameraAndViewport.bandungBound, 100),2000,null) // Make Animation move camera
-////            map.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraAndViewport.bandungBound.center,10f))
-////            map.setLatLngBoundsForCameraTarget(cameraAndViewport.bandungBound)
-//
-//        }
-
-        onMapClicked()
-        onMapLongClicked()
-    }
-
-    private fun onMapClicked() {
-        map.setOnMapClickListener {
-            Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun onMapLongClicked() {
-        map.setOnMapLongClickListener {
-            Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
-            map.addMarker(MarkerOptions().position(it))
-
-        }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.map_types_menu, menu)
@@ -97,5 +48,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
 
+        // Add a marker in jakarta and move the camera
+        val jakarta = LatLng(-6.174722685952155, 106.82711406885132)
+        val bandung = LatLng(-6.902279437865977, 107.61879009793748)
+        val ancol = LatLng(-6.128074434660651, 106.83392975804425)
+
+        val jakartaMarker =
+            map.addMarker(
+                MarkerOptions()
+                    .position(jakarta)
+                    .title("Marker in Monas")
+                    .snippet("Lorem Ipsum")
+
+            )
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(jakarta, 15f))
+        map.uiSettings.apply {
+            isZoomControlsEnabled = true
+        }
+        map.setInfoWindowAdapter(CustomInfoAdapter(this))
+
+        typeAndStyle.setMapStyle(this, map)
+    }
 }
